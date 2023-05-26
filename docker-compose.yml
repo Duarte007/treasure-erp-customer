@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  db_treasure_customer:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: duarte
+      POSTGRES_PASSWORD: duartetcc
+      POSTGRES_DB: treasure_customer
+    ports:
+      - '5432:5432'
