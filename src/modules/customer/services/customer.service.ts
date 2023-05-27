@@ -13,16 +13,34 @@ export class CustomerService {
   ) {}
 
   async create(customerData: CreateCustomerDTO): Promise<Customer> {
-    const customerToSave = CustomerAdapter.toDatabase(customerData);
+    try {
+      const customerToSave = CustomerAdapter.toDatabase(customerData);
 
-    this.customerEventsProvider.publishNewAddressEvent({
-      uuid: customerToSave.address_uuid,
-      ...customerData.address,
-    });
+      const customer = await this.customerRepository.createCustomer(
+        customerToSave,
+      );
 
-    Logger.log({ message: 'New Customer', customerData, customerToSave });
+      Logger.log({
+        message: 'New Customer',
+        customerData,
+        customerToSave,
+        customer,
+      });
 
-    return this.customerRepository.createCustomer(customerToSave);
+      this.customerEventsProvider.publishNewAddressEvent({
+        uuid: customerToSave.address_uuid,
+        ...customerData.address,
+      });
+
+      return customer;
+    } catch (error) {
+      Logger.error({
+        message: 'Error saving customer',
+        error: error.response?.data || error.message,
+        customerData,
+      });
+      throw error;
+    }
   }
 
   async update(
