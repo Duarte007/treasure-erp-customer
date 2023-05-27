@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CustomerAdapter } from '../adapters/customer.adapter';
 import { CreateCustomerDTO } from '../dto/create-customer.dto';
 import { Customer } from '../entities/customer.entity';
@@ -19,6 +19,8 @@ export class CustomerService {
       uuid: customerToSave.address_uuid,
       ...customerData.address,
     });
+
+    Logger.log({ message: 'New Customer', customerData, customerToSave });
 
     return this.customerRepository.createCustomer(customerToSave);
   }
