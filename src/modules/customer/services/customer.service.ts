@@ -15,7 +15,10 @@ export class CustomerService {
   async create(customerData: CreateCustomerDTO): Promise<Customer> {
     const customerToSave = CustomerAdapter.toDatabase(customerData);
 
-    this.customerEventsProvider.publishNewAddressEvent(customerData.address);
+    this.customerEventsProvider.publishNewAddressEvent({
+      uuid: customerToSave.address_uuid,
+      ...customerData.address,
+    });
 
     return this.customerRepository.createCustomer(customerToSave);
   }
